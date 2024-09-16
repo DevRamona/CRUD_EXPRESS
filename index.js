@@ -23,11 +23,18 @@ const writeData = (data) => {
 app.get("/add-blog", (request, response) => {
   const blog = new Blog({
     title: 'new blog',
-    snippet: 'updates',
+    snippet: 'updates2',
     body: "Add more content please"
   });
+  blog.save().then((result) => {
+    response.send(result)
+  }).catch((error) => console.log(error))
 });
-
+app.get("/all-blogs", (request, response) => {
+  Blog.find().then((result) => {
+    response.send(result)
+  })
+})
 app.post("/", (request, response) => {
   const items = readData();
 
