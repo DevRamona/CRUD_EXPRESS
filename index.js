@@ -1,11 +1,12 @@
-const express = require("express");
+const express = require('express');
 const app = express();
 const fs = require("fs");
 const { v4: uuid4 } = require("uuid");
 const mongoose = require("mongoose");
-
+const Blog = require('./models/blog')
 app.use(express.json());
-const dbURI = "mongodb+srv://ringabire:A8xLdQVosnkaOipU@cluster0.bw0on.mongodb.net/myDatabase?retryWrites=true&w=majority&appName=Cluster0"
+const dbURI =
+  "mongodb+srv://ringabire:A8xLdQVosnkaOipU@cluster0.bw0on.mongodb.net/myDatabase?retryWrites=true&w=majority&appName=Cluster0";
 const readData = () => {
   try {
     const data = fs.readFileSync("data.json", "utf-8");
@@ -19,9 +20,12 @@ const writeData = (data) => {
   fs.writeFileSync("data.json", JSON.stringify(data, null, 2));
 };
 
-app.get("/", (request, response) => {
-  const items = readData();
-  response.status(200).json(items);
+app.get("/add-blog", (request, response) => {
+  const blog = new Blog({
+    title: 'new blog',
+    snippet: 'updates',
+    body: "Add more content please"
+  });
 });
 
 app.post("/", (request, response) => {
@@ -33,12 +37,9 @@ app.post("/", (request, response) => {
   writeData(items);
   response.status(201).json(newItems);
 });
-mongoose
-  .connect(
-    "mongodb+srv://ringabire:A8xLdQVosnkaOipU@cluster0.bw0on.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-  )
-.then(() => console.log("Connected to the db"));
-const port = 3000;
-app.listen(port, () => {
-  console.log("CRUD Exercise");
-});
+const port = 3000
+mongoose.connect(dbURI).then(() => app.listen(port)).catch((error) => console.log("error faced"));
+
+// app.listen(port, () => {
+//   console.log("CRUD Exercise");
+// });
