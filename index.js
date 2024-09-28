@@ -4,6 +4,7 @@ const fs = require("fs");
 const { v4: uuid4 } = require("uuid");
 const mongoose = require("mongoose");
 const Blog = require('./models/blog')
+const Comments = require('./models/comments')
 app.use(express.json());
 const dbURI =
   "mongodb+srv://ringabire:A8xLdQVosnkaOipU@cluster0.bw0on.mongodb.net/myDatabase?retryWrites=true&w=majority&appName=Cluster0";
@@ -15,11 +16,27 @@ const readData = () => {
     console.log(error.message);
   }
 };
-
+const readerData = ()=> {
+  try {
+    const data = fs.readFile('data.json', 'utf-8')
+    return JSON.parse(data)
+  }catch (error) {
+    console.log(error.message);
+  }
+}
 const writeData = (data) => {
   fs.writeFileSync("data.json", JSON.stringify(data, null, 2));
 };
+app.get("/comment", (request, response) => {
+  const comments = new Comments({
+    title: "My comments matters",
+    name: "Ramona"
+  })
 
+  comments.save().then((result) => {
+    response.send(result)
+  }).catch((error) => console.log(error))
+})
 app.get("/add-blog", (request, response) => {
   const blog = new Blog({
     title: 'new blog',
